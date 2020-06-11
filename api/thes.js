@@ -2,18 +2,16 @@
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
 const mongodbOptions = {
-useNewUrlParser: true,
-useUnifiedTopology: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 }
 
 // Create cached connection variable
 let cachedDb = null
 
-// A function for connecting to MongoDB,
-// taking a single parameter of the connection string
+// A function for connecting to MongoDB, taking a single parameter of the connection string
 async function connectToDatabase(uri) {
-  // If the database connection is cached,
-  // use it instead of creating a new connection
+  // If the database connection is cached, use it instead of creating a new connection
   if (cachedDb) {
     return cachedDb
   }
@@ -21,8 +19,7 @@ async function connectToDatabase(uri) {
   // If no connection is cached, create a new one
   const client = await MongoClient.connect(uri, mongodbOptions)
 
-  // Select the database through the connection,
-  // using the database path of the connection string
+  // Select the database through the connection, using the database path of the connection string
   const db = await client.db(url.parse(uri).pathname.substr(1))
 
   // Cache the database connection and return the connection
@@ -30,15 +27,13 @@ async function connectToDatabase(uri) {
   return db
 }
 
-// The main, exported, function of the endpoint,
-// dealing with the request and subsequent response
+// The main, exported, function of the endpoint, dealing with the request and subsequent response
 module.exports = async (req, res) => {
-  // Get a database connection, cached or otherwise,
-  // using the connection string environment variable as the argument
+  // Get a database connection, cached or otherwise, using the connection string environment variable as the argument
   const db = await connectToDatabase(process.env.MONGODB_URI)
 
   // Select the "thepedia" collection from the database
-  const collection = await db.collection('thepedia')
+  const collection = await db.collection('thes')
 
   // Select the thepedia collection from the database
   const thepedia = await collection.find({}).toArray()
