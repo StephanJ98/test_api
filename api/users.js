@@ -1,6 +1,10 @@
 // Import Dependencies
 const url = require('url')
 const MongoClient = require('mongodb').MongoClient
+const mongodbOptions = {
+useNewUrlParser: true,
+useUnifiedTopology: true
+}
 
 // Create cached connection variable
 let cachedDb = null
@@ -15,7 +19,7 @@ async function connectToDatabase(uri) {
   }
 
   // If no connection is cached, create a new one
-  const client = await MongoClient.connect(uri, { useNewUrlParser: true })
+  const client = await MongoClient.connect(uri, mongodbOptions)
 
   // Select the database through the connection,
   // using the database path of the connection string
@@ -33,12 +37,12 @@ module.exports = async (req, res) => {
   // using the connection string environment variable as the argument
   const db = await connectToDatabase(process.env.MONGODB_URI)
 
-  // Select the "users" collection from the database
+  // Select the "thepedia" collection from the database
   const collection = await db.collection('thepedia')
 
-  // Select the users collection from the database
-  const users = await collection.find({}).toArray()
+  // Select the thepedia collection from the database
+  const thepedia = await collection.find({}).toArray()
 
-  // Respond with a JSON string of all users in the collection
-  res.status(200).json({ users })
+  // Respond with a JSON string of all thepedia in the collection
+  res.status(200).json({ thepedia })
 }
